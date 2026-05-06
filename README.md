@@ -109,4 +109,4 @@ This app is deployed using Streamlit Cloud:
 
 ## 📜 License
 
-MIT License
+This project is licensed under the MIT License.
