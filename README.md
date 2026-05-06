@@ -13,6 +13,16 @@
 
 ---
 
+## 🖼️ Screenshots
+
+### 💬 Chat UI
+![Chat UI](screenshots/chat.png)
+
+### ⚙️ Tool Execution
+![Tools](screenshots/tools.png)
+
+---
+
 ## 🧠 Features
 
 * 🤖 AI-powered assistant using LangChain agents
