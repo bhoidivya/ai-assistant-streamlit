@@ -5,19 +5,19 @@ load_dotenv()
 import os
 import streamlit as st
 
-# Load API key safely
+# Load API key
 api_key = os.getenv("OPENROUTER_API_KEY")
 
 if not api_key:
     st.error("❌ API key not found. Please check your .env file.")
     st.stop()
 
-
 # ---------- LANGCHAIN IMPORTS ----------
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain.tools import tool
 from langchain.agents import create_agent
+from datetime import datetime
 
 
 # ---------- TOOLS ----------
@@ -33,6 +33,12 @@ def say_hello(name: str) -> str:
     return f"Hello {name}, I hope you are well today"
 
 
+@tool
+def current_time() -> str:
+    """Returns current date and time"""
+    return str(datetime.now())
+
+
 # ---------- MODEL ----------
 model = ChatOpenAI(
     model="openai/gpt-4o-mini",
@@ -41,7 +47,7 @@ model = ChatOpenAI(
     api_key=api_key
 )
 
-tools = [calculator, say_hello]
+tools = [calculator, say_hello, current_time]
 agent_executor = create_agent(model=model, tools=tools)
 
 
@@ -55,19 +61,23 @@ st.set_page_config(
 st.title("🤖 AI Assistant")
 st.caption("🚀 Powered by LangChain + OpenRouter")
 
-# Sidebar (extra polish)
+# Sidebar
 with st.sidebar:
     st.header("⚙️ Settings")
     st.markdown("**Model:** GPT-4o-mini")
-    st.markdown("**Tools:** Calculator, Greeting")
+    st.markdown("**Tools:** Calculator, Greeting, Time")
     if st.button("🗑️ Clear Chat"):
         st.session_state.messages = []
+        st.session_state.history = []
         st.rerun()
 
 
 # ---------- SESSION MEMORY ----------
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "history" not in st.session_state:
+    st.session_state.history = []
 
 
 # ---------- DISPLAY CHAT ----------
@@ -80,46 +90,46 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("💬 Ask me anything...")
 
 if user_input:
-    # Save user message
+    # Save user message (UI)
     st.session_state.messages.append({
         "role": "user",
         "content": user_input
     })
 
+    # Save user message (memory for AI)
+    st.session_state.history.append(HumanMessage(content=user_input))
+
     # Display user message
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Generate assistant response
+    # Generate response
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
-        full_response = ""
 
-    try:
-        for chunk in agent_executor.stream({
-            "messages": [HumanMessage(content=user_input)]
-        }):
-            
-            # ✅ HANDLE MODEL OUTPUT
-            if "model" in chunk:
-                messages = chunk["model"].get("messages", [])
-                
-                for msg in messages:
-                    # Extract actual text from AIMessage
-                    if hasattr(msg, "content"):
-                        full_response += msg.content
-                        response_placeholder.markdown(full_response)
+        try:
+            response = agent_executor.invoke({
+                "messages": st.session_state.history
+            })
 
-        # fallback
-        if not full_response:
-            full_response = "⚠️ No response generated."
+            assistant_msg = response["messages"][-1]
+
+            # Extract text safely
+            if hasattr(assistant_msg, "content"):
+                full_response = assistant_msg.content
+            else:
+                full_response = str(assistant_msg)
+
             response_placeholder.markdown(full_response)
 
-    except Exception as e:
-        full_response = f"❌ Error: {str(e)}"
-        response_placeholder.markdown(full_response)
+            # Save assistant response (memory + UI)
+            st.session_state.history.append(assistant_msg)
 
-    # Save assistant response
+        except Exception as e:
+            full_response = f"❌ Error: {str(e)}"
+            response_placeholder.markdown(full_response)
+
+    # Save assistant message (UI)
     st.session_state.messages.append({
         "role": "assistant",
         "content": full_response
