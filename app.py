@@ -4,6 +4,8 @@ load_dotenv()
 
 import os
 import streamlit as st
+from datetime import datetime
+import pytz
 
 # Load API key
 api_key = os.getenv("OPENROUTER_API_KEY")
@@ -35,8 +37,9 @@ def say_hello(name: str) -> str:
 
 @tool
 def current_time() -> str:
-    """Returns current date and time"""
-    return str(datetime.now())
+    """Returns current date and time in IST"""
+    ist = pytz.timezone("Asia/Kolkata")
+    return datetime.now(ist).strftime("%I:%M %p, %d %B %Y")
 
 
 # ---------- MODEL ----------
