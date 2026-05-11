@@ -45,7 +45,7 @@ An AI-powered assistant with authentication, memory, and tool-calling capabiliti
 * **AI Framework:** LangChain + LangGraph
 * **Model API:** OpenRouter (GPT-4o-mini)
 * **Database:** SQLite
-* **Authentication:** bcrypt
+* **Authentication:** bcrypt (secure password hashing & user authentication)
 * **Environment Management:** python-dotenv
 
 ---
