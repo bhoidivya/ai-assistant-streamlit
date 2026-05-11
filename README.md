@@ -1,5 +1,7 @@
 # 🤖 AI Assistant (Streamlit + LangChain)
 
+An AI-powered assistant with authentication, memory, and tool-calling capabilities built using Streamlit + LangChain.
+
 [![Python](https://img.shields.io/badge/Python-3.12-blue)]()
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-red)]()
 [![LangChain](https://img.shields.io/badge/LangChain-Agent-green)]()
@@ -23,14 +25,16 @@
 
 ---
 
-## 🧠 Features
+## ✨ Features
 
-* 🤖 AI-powered assistant using LangChain agents
-* 🛠️ Tool integration (Calculator + Greeting)
-* 💬 Real-time streaming responses
-* 🧠 Chat memory using Streamlit session state
-* 🌐 Deployed on Streamlit Cloud
-* 🔐 Secure API key handling
+- 🤖 AI Assistant powered by OpenRouter + LangChain
+- 🔐 User Authentication (Login & Signup)
+- 🧠 Conversation Memory
+- ⚙️ Tool Calling Agent
+- 🧮 Calculator Tool
+- 🕒 Current Time Tool
+- 💬 Beautiful Streamlit Chat UI
+- ☁️ Deployed on Streamlit Cloud
 
 ---
 
@@ -40,6 +44,9 @@
 * **Backend:** Python
 * **AI Framework:** LangChain + LangGraph
 * **Model API:** OpenRouter (GPT-4o-mini)
+* **Database:** SQLite
+* **Authentication:** bcrypt
+* **Environment Management:** python-dotenv
 
 ---
 
